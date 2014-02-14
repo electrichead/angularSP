@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>test</title>
+	<script type="text/javascript" src="/Shared Documents/angular-1.2.12.min.js"></script>
+	<script type="text/javascript" src="/Shared Documents/angular-1.2.12-sanitize.min.js"></script>
+	<script type="text/javascript" src="/Shared Documents/underscore-1.6.0.min.js"></script>
+	<script type="text/javascript" src="/Shared Documents/xml2json.min.js"></script>
+	<script type="text/javascript" src="/Shared Documents/angularSP.js"></script>
+	<script type="text/javascript">
+		angular.element(document).ready(function() {
+			angular.module('myApp', ['AngularSP', 'ngSanitize']).filter('sortBySomeNumber', function() {
+				return function(input) {
+					return input && input.sort(function(a,b) {
+						return a["Some_number"] < b["Some_number"];
+					})
+				};
+			});
+
+			angular.module('myApp').controller('mainCtrl', ['AngularSP', '$scope', function(AngularSP, $scope) {
+				$scope.fetchList = function() {		
+					//console.log("http", AngularSP.testMe("updateListItems"));
+
+					AngularSP.send({
+						/*operation: "GetFormCollection",*/
+						operation: "GetListItems",
+						/*listName: "7E7468FC-90EB-4F17-966F-16488A66F8E2",*/
+						listName: "F68D3151-A803-46D7-A112-7CE551A8FE1D",
+						accumulator: "forms",
+						completefunc: function(data) {
+console.log("data received", data);
+							$scope.items = data;
+						}
+					});
+				};
+			}]);
+			
+			angular.bootstrap(document, ['myApp']);
+		});
+	</script>
+</head>
+<body>
+	<div id="hmm" data-ng-controller="mainCtrl">
+		<h1>Hmm.</h1>
+		<p class="ms-rteCustom-YellowCaretBlock">Second attempt</p>
+		<p><button type="button" data-ng-click="fetchList();">Fetch list</button></p>
+		<div style="margin:12px 0; padding:5px; border:1px solid #0BE; border-radius:5px;" data-ng-repeat="item in items | sortBySomeNumber" data-ng-bind-html="item.Some_HTML"></div>
+	</div>
+</body>
+</html>
